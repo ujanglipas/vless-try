@@ -1,0 +1,55 @@
+name: Mirror Upstream
+
+on:
+  schedule:
+    - cron: "17 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mirror-upstream-main
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    if: github.event.repository.fork == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout fork repository
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Make fork identical to upstream
+        env:
+          UPSTREAM_REPO: NiREvil/vless
+          BRANCH: main
+        run: |
+          set -euo pipefail
+
+          git config user.name "NET Sentinel Bot"
+          git config user.email "224584266+NetSentinel-Bot@users.noreply.github.com"
+
+          git remote add upstream "https://github.com/${UPSTREAM_REPO}.git" 2>/dev/null || true
+          git remote set-url upstream "https://github.com/${UPSTREAM_REPO}.git"
+
+          git fetch upstream "${BRANCH}"
+
+          LOCAL_SHA="$(git rev-parse HEAD)"
+          UPSTREAM_SHA="$(git rev-parse "upstream/${BRANCH}")"
+
+          if [ "$LOCAL_SHA" = "$UPSTREAM_SHA" ]; then
+            echo "✅ Fork already mirrors upstream."
+            exit 0
+          fi
+
+          git checkout -B "${BRANCH}" "upstream/${BRANCH}"
+          git push origin "HEAD:${BRANCH}" --force
+
+          echo "✅ Fork is now an exact mirror of ${UPSTREAM_REPO}:${BRANCH}"

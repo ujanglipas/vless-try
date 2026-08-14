@@ -1,0 +1,19 @@
+Last updated: Mon, 10 Aug 2026 03:49:54 – IRN
+
+
+ /**
+ * Credits
+ *  - Dìana
+ *
+ * ProxyIP checkers
+ *  - https://proxyip.victoriacross.ir
+ *  - https://checker-3j2.pages.dev
+ *  - https://check.proxyip.cmliussss.net
+ *  - https://cprx.goku7.workers.dev
+ *  - https://t.me/ProxyIPChecker_Bot
+ *
+ * Stay in touch
+ *  - Telegram: https://telegram.me/NiREvil_GP
+ *  - Proxy Land: https://github.com/NiREvil/vless/blob/main/sub/ProxyIP.md
+ */
+
