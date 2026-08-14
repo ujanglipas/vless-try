@@ -1,0 +1,86 @@
+{
+  "log": {
+    "loglevel": "warning",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      "1.1.1.1",
+      "8.8.8.8",
+      "8.8.4.4"
+    ],
+    "strategy": "prefer_ipv4"
+  },
+  "routing": {
+    "rules": [
+      {
+        "type": "field",
+        "ip": ["geoip:private"],
+        "outbound": "direct"
+      },
+      {
+        "type": "field",
+        "domain": ["geosite:private"],
+        "outbound": "direct"
+      }
+    ]
+  },
+  "inbounds": [
+    {
+      "port": 10808,
+      "protocol": "socks",
+      "settings": {
+        "auth": "noauth",
+        "udp": false
+      },
+      "tag": "socks-in"
+    },
+    {
+      "port": 10809,
+      "protocol": "http",
+      "tag": "http-in"
+    }
+  ],
+  "outbounds": [
+    {
+      "protocol": "vless",
+      "settings": {
+        "vnext": [
+          {
+            "address": "188.114.97.128",
+            "port": 443,
+            "users": [
+              {
+                "id": "550e8400-e29b-41d4-a716-446655440000",
+                "encryption": "none",
+                "level": 0
+              }
+            ]
+          }
+        ]
+      },
+      "streamSettings": {
+        "network": "ws",
+        "wsSettings": {
+          "path": "/websocket",
+          "headers": {
+            "Host": "188.114.97.128"
+          }
+        },
+        "security": "none"
+      },
+      "mux": {
+        "enabled": false
+      },
+      "tag": "proxy"
+    },
+    {
+      "protocol": "freedom",
+      "tag": "direct"
+    },
+    {
+      "protocol": "blackhole",
+      "tag": "block"
+    }
+  ]
+}
